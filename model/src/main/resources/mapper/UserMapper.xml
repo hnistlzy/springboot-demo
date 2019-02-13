@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kenton.model.mapper.UserMapper">
+    <insert id="insertIntoUser" >
+        insert into t_user(id,name)
+        values (#{id},#{name})
+    </insert>
+    <select id="selectById" resultType="User">
+        select * from t_user where id =#{id}
+    </select>
+</mapper>
