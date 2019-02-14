@@ -13,8 +13,8 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="model" options="-parameters" />
-      <module name="server" options="-parameters" />
+      <module name="model" options="" />
+      <module name="server" options="" />
     </option>
   </component>
 </project>
