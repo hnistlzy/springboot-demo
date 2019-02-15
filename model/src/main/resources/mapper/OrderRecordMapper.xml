@@ -4,6 +4,13 @@
   <select id="selectByPrimaryKey" resultMap="orderRecordMap">
     select * from order_record where id= #{id}
   </select>
+
+  <select id="getAllOrderRecord" resultMap="orderRecordMap">
+      select * from order_record
+  </select>
+    <insert id="insertOrderRecord">
+        insert into order_record(order_no,order_type) values (#{orderNo},#{orderType})
+    </insert>
   <resultMap id="orderRecordMap" type="OrderRecord">
     <id column="id" property="id"/>
     <result column="order_no" property="orderNo"/>

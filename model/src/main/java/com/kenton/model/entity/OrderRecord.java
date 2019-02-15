@@ -13,6 +13,17 @@ public class OrderRecord {
 
     private Date updateTime;
 
+    @Override
+    public String toString() {
+        return "OrderRecord{" +
+                "id=" + id +
+                ", orderNo='" + orderNo + '\'' +
+                ", orderType='" + orderType + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
+    }
+
     public Integer getId() {
         return id;
     }
