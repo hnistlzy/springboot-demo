@@ -8,7 +8,7 @@ public class BaseResponse<T> {
     private T data;
 
 
-    public BaseResponse(T data, StatusCode statusCode) {
+    public BaseResponse(StatusCode statusCode,T data) {
         this.data = data;
         this.code=statusCode.getCode();
         this.msg=statusCode.getMsg();
@@ -24,16 +24,6 @@ public class BaseResponse<T> {
         this.msg=statusCode.getMsg();
     }
 
-    public BaseResponse(T data, String msg) {
-        this.data = data;
-        this.msg = msg;
-    }
-
-    public BaseResponse(T data, String msg, Integer code) {
-        this.data = data;
-        this.msg = msg;
-        this.code = code;
-    }
 
     public T getData() {
         return data;

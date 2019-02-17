@@ -5,6 +5,9 @@ import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * 为了区分是否有增加合法性校验，所以新增一个实体类
+ */
 @Data
 @ToString
 public class ValidateOrderRecordDTO {
