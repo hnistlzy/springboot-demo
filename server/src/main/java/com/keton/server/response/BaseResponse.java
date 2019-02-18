@@ -13,7 +13,6 @@ public class BaseResponse<T> {
         this.code=statusCode.getCode();
         this.msg=statusCode.getMsg();
     }
-
     public BaseResponse(StatusCode statusCode,String msg) {
         this.msg = msg;
         this.code=statusCode.getCode();
