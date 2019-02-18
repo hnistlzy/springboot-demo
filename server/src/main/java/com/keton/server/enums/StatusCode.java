@@ -2,7 +2,9 @@ package com.keton.server.enums;
 
 public enum StatusCode {
    Success(200,"成功"),
-   Fail(-1,"失败") ;
+   Fail(-1,"失败"),
+   Invalid_Pram(10021,"参数不合法");
+
     private Integer code;
     private String msg;
 
