@@ -16,6 +16,8 @@
         <java.version>11</java.version>
         <druid.version>1.0.16</druid.version>
         <lombok.version>1.18.6</lombok.version>
+        <commons-fileupload.version>1.4</commons-fileupload.version>
+        <common-lang.version>3.8.1</common-lang.version>
     </properties>
 
     <dependencies>
@@ -56,18 +58,16 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-            <dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
-            </dependency>
+        </dependency>
         <!--thymeleaf模板引擎依赖-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
-
         </dependency>
         <!--druid-->
         <dependency>
@@ -75,13 +75,18 @@
             <artifactId>druid</artifactId>
             <version>${druid.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <!-- 文件上传组件 -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>${commons-fileupload.version}</version>
         </dependency>
-
+        <!--common-lang3-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${common-lang.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

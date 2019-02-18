@@ -3,7 +3,8 @@ package com.keton.server.enums;
 public enum StatusCode {
    Success(200,"成功"),
    Fail(-1,"失败"),
-   Invalid_Pram(10021,"参数不合法");
+   Invalid_Pram(10021,"参数不合法"),
+    FileUploadFail(10022,"文件上传失败");
 
     private Integer code;
     private String msg;
