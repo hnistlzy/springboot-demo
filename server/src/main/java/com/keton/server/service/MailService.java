@@ -12,10 +12,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
+import java.util.Map;
 
 @Service
 public class MailService {
@@ -32,6 +35,8 @@ public class MailService {
     private String attachmentName;
     @Autowired
     private Environment environment;
+    @Autowired
+    private TemplateEngine templateEngine;
     /**
      * 发送简单文本文件
      * @param dto 邮件实体
@@ -52,17 +57,15 @@ public class MailService {
 
         }
     }
-
+    /**
+     * 发送带文件的邮件
+     * @param dto 邮件实体
+     */
     public void sendFileEmail(SendMailDto dto) {
         MimeMessage message = javaMailSender.createMimeMessage();
         try{
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true);
-            mimeMessageHelper.setFrom(from);
-            mimeMessageHelper.setTo(dto.getTo());
-            mimeMessageHelper.setSubject(dto.getSubject());
-            mimeMessageHelper.setText(dto.getContent());
+            MimeMessageHelper mimeMessageHelper = getMimeMsgHelper(dto, message,null);
             File file =new File(environment.getProperty("send.mail.attachment.url"));
-
             mimeMessageHelper.addAttachment(environment.getProperty("send.mail.attachment"),file);
             javaMailSender.send(message);
         }catch (MessagingException e){
@@ -75,7 +78,39 @@ public class MailService {
 
     }
 
-    public void sendTemplateEmail(SendMailDto dto){
 
+
+    /**
+     * 发送带模板引擎的邮件
+     * @param dto
+     */
+    public void sendTemplateEmail(SendMailDto dto, Map<String,Object> map){
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try{
+            getMimeMsgHelper(dto, mimeMessage, map);
+            javaMailSender.send(mimeMessage);
+            log.info("邮件发送成功");
+
+        }catch (Exception e){
+            e.fillInStackTrace();
+            log.error("邮件发送发生异常"+e.getMessage());
+        }
     }
+    private  MimeMessageHelper getMimeMsgHelper(SendMailDto dto, MimeMessage message,Map<String,Object> contextMap) throws MessagingException {
+
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true);
+        mimeMessageHelper.setFrom(from);
+        mimeMessageHelper.setTo(dto.getTo());
+        mimeMessageHelper.setSubject(dto.getSubject());
+        if(contextMap==null){
+            mimeMessageHelper.setText(dto.getContent());
+        }else{
+            Context context =new Context();
+            context.setVariables(contextMap);
+            String mailContext = templateEngine.process("mailSender", context);
+            mimeMessageHelper.setText(mailContext,true);
+        }
+        return  mimeMessageHelper;
+    }
+
 }

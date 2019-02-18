@@ -7,6 +7,7 @@ import com.keton.server.service.MailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -25,7 +27,8 @@ public class MailController {
     private static  final String prefix="/mail";
     @Autowired
     private MailService mailService;
-
+    @Autowired
+    private Environment environment;
     /**
      * 发送简单文本邮件
      * @param dto 收件人，标题，内容等信息
@@ -82,7 +85,14 @@ public class MailController {
                 return errorResponse(bindingResult);
             }
             log.info("接受到数据:"+dto.toString());
-            mailService.sendTemplateEmail(dto);
+            //下面的数据除了用户名外，都应从配置文件中取得
+            //用户名应从session，或者是其他数据源取得。
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("user","dkf");
+            map.put("web",environment.getProperty("send.mail.web"));
+            map.put("company",environment.getProperty("send.mail.company"));
+            map.put("product",environment.getProperty("send.mail.product"));
+            mailService.sendTemplateEmail(dto,map);
         }catch (Exception e){
             baseResponse = new BaseResponse(StatusCode.Fail,e.getMessage());
             e.fillInStackTrace();
