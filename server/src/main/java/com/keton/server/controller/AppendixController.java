@@ -11,21 +11,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import java.io.File;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -36,7 +35,13 @@ public class AppendixController {
     private AppendixService service;
     @Autowired
     private AppendixMapper mapper;
-
+    @Autowired
+    private Environment environment;
+    /**
+     * 文件上传功能
+     * @param request MultipartHttpServletRequest
+     * @return BaseResponse
+     */
     @RequestMapping(value = prefix + "/upload", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseResponse fileUpload(MultipartHttpServletRequest request) {
         BaseResponse baseResponse = new BaseResponse(StatusCode.Success);
@@ -118,4 +123,27 @@ public class AppendixController {
         }
         return baseResponse;
     }
+    @RequestMapping(value =prefix+"/fileDownload/{id}",method = RequestMethod.GET)
+    public   String fileDownload(@PathVariable Integer id, HttpServletResponse response){
+
+        if(id==null ||id<0){
+            return null;
+        }
+        try{
+            Appendix appendix = mapper.selectByPrimaryKey(id);
+            if(appendix!=null){
+                String location = environment.getProperty("spring.servlet.multipart.location")+appendix.getLocation();
+                String fileName = appendix.getName();
+                log.info("获取到的文件路径为:"+fileName);
+                service.fileDownload(location ,response,fileName);
+            }
+
+        }catch (Exception e){
+            log.error("文件下载发生错误,{}"+e);
+            e.printStackTrace();
+        }
+
+        return  null;
+    }
+
 }
