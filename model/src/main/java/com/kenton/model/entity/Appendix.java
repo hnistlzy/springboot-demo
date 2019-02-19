@@ -1,18 +1,20 @@
-package pojo;
+package com.kenton.model.entity;
+
+import lombok.ToString;
 
 import java.util.Date;
-
+@ToString
 public class Appendix {
     private Integer id;
-
+    //文件名
     private String name;
-
+    //文件大小
     private Long size;
-
+    //文件所属模块
     private String moduleType;
-
+    // 文件所属模块id
     private Integer recordId;
-
+    //是否可删除
     private Integer isDelete;
 
     private String location;
