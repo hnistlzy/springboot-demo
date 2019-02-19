@@ -58,25 +58,22 @@ public class AppendixService {
      * @param appendixDto 用于装载moduleType,location,recordId等信息
      * @return 是否保存成功
      */
-    public Boolean saveFileUploadRecord(MultipartFile multipartFile, AppendixDto appendixDto) throws Exception {
-        boolean isSaveSucc=false;
+    public Integer saveFileUploadRecord(MultipartFile multipartFile, AppendixDto appendixDto) throws Exception {
+
+        Appendix appendix = new Appendix();
+        BeanUtils.copyProperties(appendixDto,appendix);
+
         //TODO:获取当前Date类型时间
         SimpleDateFormat createTimeFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         String createTimeStr = createTimeFormat.format(new Date());
         Date createTime = createTimeFormat.parse(createTimeStr);
-
-        //TODO:获取文件名
-        String fileName = multipartFile.getOriginalFilename();
-        Appendix appendix = new Appendix();
-        BeanUtils.copyProperties(appendixDto,appendix);
-        appendix.setName(fileName);
+        //TODO:设置文件名、文件大小、文件上传时间
+        appendix.setName(multipartFile.getOriginalFilename());
+        appendix.setSize(multipartFile.getSize());
         appendix.setCreateTime(createTime);
+         mapper.insertSelective(appendix);
         log.info("appendix:{}",appendix);
-        int save = mapper.insert(appendix);
-        if(save>=1){
-            isSaveSucc=true;
-        }
-        log.info("文件记录保存状态:{}",isSaveSucc);
-        return  isSaveSucc;
+
+        return  appendix.getId();
     }
 }

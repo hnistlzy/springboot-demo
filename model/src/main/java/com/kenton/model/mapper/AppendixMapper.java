@@ -6,6 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface AppendixMapper {
-    int insertFileSaveRecord(Appendix record);
+    int insertSelective(Appendix record);
     int insert(Appendix record);
+
+    Appendix selectByPrimaryKey(Integer appendixId);
+
+    void updateRecordId(Appendix appendix);
 }

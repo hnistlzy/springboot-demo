@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kenton.model.mapper.AppendixMapper">
-    <resultMap id="BaseResultMap" type="com.kenton.model.mapper.AppendixMapper">
-        <result column="id" jdbcType="INTEGER" property="id" />
+    <resultMap id="appendixMap" type="Appendix">
+        <id column="id" jdbcType="INTEGER" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="size" jdbcType="BIGINT" property="size" />
         <result column="module_type" jdbcType="VARCHAR" property="moduleType" />
@@ -13,7 +13,14 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="sort_by" jdbcType="INTEGER" property="sortBy" />
     </resultMap>
-    <insert id="insert" parameterType="com.kenton.model.mapper.AppendixMapper">
+
+    <select id="selectByPrimaryKey" resultMap="appendixMap" resultType="Appendix" >
+        select * from appendix where id= #{appendixId}
+    </select>
+    <update id="updateRecordId">
+        update appendix set record_id =#{recordId} where id=#{id}
+    </update>
+    <insert id="insert" parameterType="com.kenton.model.entity.Appendix"  useGeneratedKeys="true" keyProperty="id">
     insert into appendix (id, name, size,
       module_type, record_id, is_delete,
       location, create_time, update_time,
@@ -23,7 +30,7 @@
       #{location,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
       #{sortBy,jdbcType=INTEGER})
   </insert>
-    <insert id="insertSelective" parameterType="Appendix">
+    <insert id="insertSelective" parameterType="com.kenton.model.entity.Appendix" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into appendix
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
