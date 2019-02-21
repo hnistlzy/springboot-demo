@@ -5,17 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
-import org.springframework.core.env.Environment;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.Map;
@@ -34,83 +29,46 @@ public class MailService {
     @Value(value = "send.mail.attachment")
     private String attachmentName;
     @Autowired
-    private Environment environment;
-    @Autowired
     private TemplateEngine templateEngine;
-    /**
-     * 发送简单文本文件
-     * @param dto 邮件实体
-     */
-    public void sendTextEmail(SendMailDto dto){
-
-        SimpleMailMessage mailMessage =new SimpleMailMessage();
-        mailMessage.setFrom(from);
-        mailMessage.setTo(dto.getTo());
-        mailMessage.setSubject(dto.getSubject());
-        mailMessage.setText(dto.getContent());
-        try{
-            javaMailSender.send(mailMessage);
-            System.out.println("邮件发送成功");
-        }catch (Exception e){
-            e.fillInStackTrace();
-            log.error("邮件发送发生了异常：{}"+e.getMessage());
-
-        }
-    }
-    /**
-     * 发送带文件的邮件
-     * @param dto 邮件实体
-     */
-    public void sendFileEmail(SendMailDto dto) {
-        MimeMessage message = javaMailSender.createMimeMessage();
-        try{
-            MimeMessageHelper mimeMessageHelper = getMimeMsgHelper(dto, message,null);
-            File file =new File(environment.getProperty("send.mail.attachment.url"));
-            mimeMessageHelper.addAttachment(environment.getProperty("send.mail.attachment"),file);
-            javaMailSender.send(message);
-        }catch (MessagingException e){
-            e.printStackTrace();
-            log.error("send file mail filed"+e.getMessage());
-
-        }
-
-        log.info("邮件发送完毕");
-
-    }
-
-
 
     /**
-     * 发送带模板引擎的邮件
-     * @param dto
+     * 通用的邮件发送服务
+     * @param dto dto
+     * @param contextMap contextMap
+     * @param nameLocationMap nameLocationMap
+     * @param templateName templateName
+     * @throws Exception exception
      */
-    public void sendTemplateEmail(SendMailDto dto, Map<String,Object> map){
+    public void sendMail(final SendMailDto dto,final Map<String,Object> contextMap,Map<String,String> nameLocationMap,final String templateName) throws  Exception{
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        try{
-            getMimeMsgHelper(dto, mimeMessage, map);
-            javaMailSender.send(mimeMessage);
-            log.info("邮件发送成功");
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
-        }catch (Exception e){
-            e.fillInStackTrace();
-            log.error("邮件发送发生异常"+e.getMessage());
-        }
-    }
-    private  MimeMessageHelper getMimeMsgHelper(SendMailDto dto, MimeMessage message,Map<String,Object> contextMap) throws MessagingException {
-
-        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true);
         mimeMessageHelper.setFrom(from);
-        mimeMessageHelper.setTo(dto.getTo());
         mimeMessageHelper.setSubject(dto.getSubject());
-        if(contextMap==null){
+        if(dto.getContent()!=null){
             mimeMessageHelper.setText(dto.getContent());
-        }else{
-            Context context =new Context();
-            context.setVariables(contextMap);
-            String mailContext = templateEngine.process("mailSender", context);
-            mimeMessageHelper.setText(mailContext,true);
         }
-        return  mimeMessageHelper;
+        if(dto.getTos()!=null){
+            mimeMessageHelper.setTo(dto.getTos());
+        }else{
+            mimeMessageHelper.setTo(dto.getTo());
+        }
+
+        if(nameLocationMap!=null){
+            for(Map.Entry<String,String> entry:nameLocationMap.entrySet()){
+                String fileName = entry.getKey();
+                String fileLocation = entry.getValue();
+                mimeMessageHelper.addAttachment(fileName,new File(fileLocation));
+            }
+        }
+        if(contextMap!=null){
+            Context context = new Context();
+            context.setVariables(contextMap);
+            String mailSender = templateEngine.process(templateName, context);
+            mimeMessageHelper.setText(mailSender,true);
+        }
+        javaMailSender.send(mimeMessage);
+        log.info("邮件发送成功！");
     }
 
 }

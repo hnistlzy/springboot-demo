@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+</head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+订单编号是:<p th:text="${orderNo}"></p>
+订单所属模块是:<p th:text="${orderType}"></p>
+订单相关的文件名称列表：
+<table>
+    <tr>
+        <th>NAME</th>
+        <th>PRICE</th>
+        <th>IN STOCK</th>
+    </tr>
+    <tr th:each="prod : ${filenames}">
+        <td th:text="${prod}">Onions</td>
+    </tr>
+</table>
+</body>
+</html>

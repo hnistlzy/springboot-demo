@@ -1,5 +1,7 @@
 package com.keton.server.controller;
 
+import com.kenton.model.entity.Appendix;
+import com.kenton.model.mapper.AppendixMapper;
 import com.keton.server.enums.StatusCode;
 import com.keton.server.request.SendMailDto;
 import com.keton.server.response.BaseResponse;
@@ -12,14 +14,13 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class MailController {
@@ -29,77 +30,62 @@ public class MailController {
     private MailService mailService;
     @Autowired
     private Environment environment;
-    /**
-     * 发送简单文本邮件
-     * @param dto 收件人，标题，内容等信息
-     * @param bindingResult  校验器
-     * @return baseResponse
-     */
-    @RequestMapping(value = prefix+"/textMail",method = RequestMethod.GET,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public BaseResponse sendTextMail(@RequestBody @Validated SendMailDto dto, BindingResult bindingResult){
+    @Autowired
+    private AppendixMapper appendixMapper;
+
+    @GetMapping(value = prefix+"/sendMail",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public BaseResponse sendMail(@RequestBody @Validated SendMailDto dto,BindingResult bindingResult){
         BaseResponse baseResponse = new BaseResponse(StatusCode.Success);
+        if(bindingResult.hasErrors()){
+            return errorResponse(bindingResult);
+        }
         try{
-            if(bindingResult.hasErrors()){
+            log.info("传进来的参数为：{}",dto);
+            //TODO:接受前端传过来的收件箱，主题，内容等信息
+            Integer recordId = dto.getRecordId();
+            if(recordId==null || recordId<=0){
                 return errorResponse(bindingResult);
             }
-            log.info("接受到数据:"+dto.toString());
-            mailService.sendTextEmail(dto);
-        }catch (Exception e){
-            baseResponse = new BaseResponse(StatusCode.Fail,e.getMessage());
-            e.fillInStackTrace();
-        }
-        return  baseResponse;
-    }
-    /**
-     * 发送带附件的邮件
-     * @param dto 收件人，标题，内容等信息
-     * @param bindingResult  校验器
-     * @return baseResponse
-     */
-    @RequestMapping(value = prefix+"/fileMail",method = RequestMethod.GET,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public BaseResponse sendFileMail(@RequestBody @Validated SendMailDto dto, BindingResult bindingResult){
-        BaseResponse baseResponse = new BaseResponse(StatusCode.Success);
-        try{
-            if(bindingResult.hasErrors()){
-                return errorResponse(bindingResult);
+            List<Appendix> appendices = appendixMapper.selectByRecordId(recordId);
+            if(appendices==null||appendices.isEmpty()){
+                return  new BaseResponse(StatusCode.Fail);
             }
-            log.info("前端数据:"+dto.toString());
-            mailService.sendFileEmail(dto);
-        }catch (Exception e){
-            baseResponse = new BaseResponse(StatusCode.Fail,e.getMessage());
-            e.fillInStackTrace();
-        }
-        return  baseResponse;
-    }
-    /**
-     * 发送基于模板引擎的邮件
-     * @param dto 收件人，标题，内容等信息
-     * @param bindingResult  校验器
-     * @return baseResponse
-     */
-    @RequestMapping(value = prefix+"/templateMail",method = RequestMethod.GET,consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public BaseResponse sendTemplateMail(@RequestBody @Validated SendMailDto dto, BindingResult bindingResult){
-        BaseResponse baseResponse = new BaseResponse(StatusCode.Success);
-        try{
-            if(bindingResult.hasErrors()){
-                return errorResponse(bindingResult);
+            Map<String,String> nameLocationMap=new HashMap<>();
+            for(Appendix appendix:appendices){
+                String location = environment.getProperty("spring.servlet.multipart.location")+ File.separator+appendix.getLocation();
+                String name = appendix.getName();
+                nameLocationMap.put(name,location);
             }
-            log.info("接受到数据:"+dto.toString());
-            //下面的数据除了用户名外，都应从配置文件中取得
-            //用户名应从session，或者是其他数据源取得。
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("user","dkf");
-            map.put("web",environment.getProperty("send.mail.web"));
-            map.put("company",environment.getProperty("send.mail.company"));
-            map.put("product",environment.getProperty("send.mail.product"));
-            mailService.sendTemplateEmail(dto,map);
+            //TODO:设置模板引擎需要的数据
+            Map<String,Object> contextMap=new HashMap<>();
+            contextMap.put("product",environment.getProperty("send.mail.product"));
+            contextMap.put("web",environment.getProperty("send.mail.web"));
+            contextMap.put("company",environment.getProperty("send.mail.company"));
+
+            mailService.sendMail(dto,contextMap,nameLocationMap,"mailSender");
         }catch (Exception e){
-            baseResponse = new BaseResponse(StatusCode.Fail,e.getMessage());
-            e.fillInStackTrace();
+            log.error("邮件发送失败,{}",e);
+            e.printStackTrace();
+            return  new BaseResponse(StatusCode.Fail);
         }
-        return  baseResponse;
+        return baseResponse;
     }
 
+    @GetMapping(value = prefix+"/sendTextMail",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public BaseResponse sendTextMail(@RequestBody @Validated SendMailDto dto,BindingResult bindingResult){
+        BaseResponse baseResponse = new BaseResponse(StatusCode.Success);
+        if(bindingResult.hasErrors()){
+            return errorResponse(bindingResult);
+        }
+        try{
+            mailService.sendMail(dto,null,null,null);
+        }catch (Exception e){
+            log.error("发送邮件发生错误，错误原因：{}",e.getMessage());
+            e.printStackTrace();
+            return  new BaseResponse(StatusCode.Fail);
+        }
+        return  baseResponse;
+    }
 
 
     private BaseResponse errorResponse(BindingResult bindingResult) {

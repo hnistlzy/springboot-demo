@@ -17,6 +17,12 @@
     <select id="selectByPrimaryKey" resultMap="appendixMap" resultType="Appendix" >
         select * from appendix where id= #{appendixId}
     </select>
+    <select id="selectByRecordId" resultMap="appendixMap" resultType="Appendix">
+        select * from appendix where record_id=#{recordId}
+    </select>
+    <select id="selectByRecordIdModuleType" resultType="Appendix" resultMap="appendixMap">
+        select name,location from appendix where record_id=#{id} and module_type=#{orderType}
+    </select>
     <update id="updateRecordId">
         update appendix set record_id =#{recordId} where id=#{id}
     </update>

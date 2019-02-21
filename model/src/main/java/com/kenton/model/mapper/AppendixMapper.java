@@ -3,6 +3,9 @@ package com.kenton.model.mapper;
 
 import com.kenton.model.entity.Appendix;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface AppendixMapper {
@@ -12,4 +15,9 @@ public interface AppendixMapper {
     Appendix selectByPrimaryKey(Integer appendixId);
 
     void updateRecordId(Appendix appendix);
+
+    List<Appendix> selectByRecordId(Integer recordId);
+
+    List<Appendix> selectByRecordIdModuleType(@Param(value = "id") Integer id, @Param(value = "orderType") String orderType);
+
 }
