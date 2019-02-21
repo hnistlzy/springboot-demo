@@ -4,6 +4,10 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.util.Date;
+/**
+ * @author KentonLee
+ * @date 2019/2/21
+ */
 @ToString
 @Data
 public class Appendix {

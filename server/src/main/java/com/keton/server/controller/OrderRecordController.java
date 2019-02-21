@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * @author KentonLee
+ * @date 2019/2/21
+ */
 @RestController
 public class OrderRecordController {
     @Autowired
@@ -25,7 +28,12 @@ public class OrderRecordController {
     private static final String prefix="/order";
     @Autowired
     private OrderRecordService service;
-//    rest风格api,前端访问路径为：localhost:8081/order/getOrder/1
+
+    /**
+     * 简单查询
+     * @param id id
+     * @return OrderRecord
+     */
     @RequestMapping(value = prefix+"/getOrder/{id}",method = RequestMethod.GET)
     public OrderRecord getOrder(@PathVariable Integer id){
         return orderRecordMapper.selectByPrimaryKey(id);

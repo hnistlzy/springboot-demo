@@ -1,6 +1,7 @@
 package com.keton.server.service;
 
 import com.keton.server.request.SendMailDto;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,10 @@ import org.thymeleaf.context.Context;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.Map;
-
+/**
+ * @author KentonLee
+ * @date 2019/2/21
+ */
 @Service
 public class MailService {
     private static  final Logger log= LoggerFactory.getLogger(MailService.class);
@@ -45,15 +49,18 @@ public class MailService {
 
         mimeMessageHelper.setFrom(from);
         mimeMessageHelper.setSubject(dto.getSubject());
-        if(dto.getContent()!=null){
+        if(!StringUtils.isEmpty(dto.getContent())){
             mimeMessageHelper.setText(dto.getContent());
         }
-        if(dto.getTos()!=null){
-            mimeMessageHelper.setTo(dto.getTos());
-        }else{
-            mimeMessageHelper.setTo(dto.getTo());
+        if(!StringUtils.isEmpty(dto.getTo())){
+            mimeMessageHelper.setTo(dto.getTo().split(","));
         }
-
+        if(!StringUtils.isEmpty(dto.getCc())){
+            mimeMessageHelper.setCc(dto.getCc().split(","));
+        }
+        if(!StringUtils.isEmpty(dto.getBcc())){
+            mimeMessageHelper.setBcc(dto.getBcc().split(","));
+        }
         if(nameLocationMap!=null){
             for(Map.Entry<String,String> entry:nameLocationMap.entrySet()){
                 String fileName = entry.getKey();

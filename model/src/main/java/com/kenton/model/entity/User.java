@@ -1,5 +1,8 @@
 package com.kenton.model.entity;
-
+/**
+ * @author KentonLee
+ * @date 2019/2/21
+ */
 public class User {
     private Integer id;
     private String name;

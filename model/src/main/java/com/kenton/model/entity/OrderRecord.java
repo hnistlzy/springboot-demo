@@ -1,7 +1,10 @@
 package com.kenton.model.entity;
 
 import java.util.Date;
-
+/**
+ * @author KentonLee
+ * @date 2019/2/21
+ */
 public class OrderRecord {
     private Integer id;
 

@@ -21,7 +21,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * @author KentonLee
+ * @date 2019/2/21
+ */
 @RestController
 public class MailController {
     private  static  final Logger log= LoggerFactory.getLogger(MailController.class);

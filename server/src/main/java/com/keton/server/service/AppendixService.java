@@ -18,7 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * 文件上传、下载服务
+ * @author KentonLee
+ * @date 2019/2/21
  */
 @Service
 public class AppendixService {

@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 之前的OrderRecordController中没有对接收到的数据进行合法性校验。
  * 这里增加合法性校验的例子
+ * @author KentonLee
+ * @date 2019/2/21
  */
 @RestController
 public class ValidateController {

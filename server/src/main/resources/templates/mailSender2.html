@@ -17,8 +17,8 @@
         <th>PRICE</th>
         <th>IN STOCK</th>
     </tr>
-    <tr th:each="prod : ${filenames}">
-        <td th:text="${prod}">Onions</td>
+    <tr th:each="name : ${nameList}">
+        <td th:text="${name}">Onions</td>
     </tr>
 </table>
 </body>

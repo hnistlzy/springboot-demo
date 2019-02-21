@@ -1,7 +1,10 @@
 package com.keton.server.request;
 
 import java.io.Serializable;
-
+/**
+ * @author KentonLee
+ * @date 2019/2/21
+ */
 public class OrderRecordInsertUpdateDTO implements Serializable {
 
 

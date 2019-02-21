@@ -1,0 +1,66 @@
+GET http://localhost:8081/order/getList
+Accept: application/json
+
+<> 2019-02-21T103717.200.json
+
+###
+
+GET http://localhost:8081/order/getOrder2/1
+Accept: application/json
+
+<> 2019-02-21T103543.200.json
+
+###
+
+GET http://localhost:8081/%20/order/getOrder2/1
+Accept: application/json
+
+<> 2019-02-21T103533.404.json
+
+###
+
+GET http://localhost:8081/getOrder2/25
+Accept: application/json
+
+<> 2019-02-21T103506.404.json
+
+###
+
+GET http://localhost:8081/getOrder2/23
+Accept: application/json
+
+<> 2019-02-21T103502.404.json
+
+###
+
+GET http://localhost:8081/getOrder2/2
+Accept: application/json
+
+<> 2019-02-21T103459.404.json
+
+###
+
+GET http://localhost:8081/getOrder2/1
+Accept: application/json
+
+<> 2019-02-21T103453.404.json
+
+###
+
+GET http://localhost:8081/getOrder2/23
+Accept: application/json
+
+<> 2019-02-21T103443.404.json
+
+###
+
+GET http://localhost:8080/order/getOrder/1
+Accept: application/json
+
+###
+
+GET http://localhost:8080/order/getOrder/1
+Accept: application/json
+
+###
+

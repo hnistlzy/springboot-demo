@@ -1,7 +1,10 @@
 package com.keton.server.response;
 
 import com.keton.server.enums.StatusCode;
-
+/**
+ * @author KentonLee
+ * @date 2019/2/21
+ */
 public class BaseResponse<T> {
     private Integer code;
     private String msg;

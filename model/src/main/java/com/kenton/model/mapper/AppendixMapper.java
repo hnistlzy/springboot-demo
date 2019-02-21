@@ -6,7 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+/**
+ * @author KentonLee
+ * @date 2019/2/21
+ */
 @Mapper
 public interface AppendixMapper {
     int insertSelective(Appendix record);
